@@ -2,6 +2,7 @@ import { takeLatest, call, put, all } from 'redux-saga/effects';
 import { Alert } from 'react-native';
 
 import api from '~/services/api';
+import * as navigation from '~/services/navigation';
 
 import { signInSuccess, signUpSuccess, signFailure } from './actions';
 
@@ -51,9 +52,9 @@ export function* signUp({ payload }) {
       password,
     });
 
-    // history.push('/');
     Alert.alert('Success!', 'Log in');
     yield put(signUpSuccess());
+    navigation.navigate('SignIn');
   } catch (err) {
     Alert.alert(
       'Error!',
