@@ -28,9 +28,9 @@ export default function SignUp({ navigation }) {
   const loading = useSelector(state => state.auth.loading);
 
   const [name, setName] = useState('');
-  const [email, setEmail] = useState([]);
-  const [password, setPassword] = useState([]);
-  const [confirmPassword, setConfirmPassword] = useState([]);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   function handleSubmit() {
     dispatch(signUpRequest(name, email, password, confirmPassword));
@@ -60,6 +60,7 @@ export default function SignUp({ navigation }) {
             autoCapitalize="none"
             placeholder="Your email"
             returnKeyType="next"
+            ref={emailRef}
             onSubmitEditing={() => passwordRef.current.focus()}
             value={email}
             onChangeText={setEmail}
