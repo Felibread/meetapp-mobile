@@ -2,7 +2,7 @@ import { takeLatest, call, put, all } from 'redux-saga/effects';
 import { Alert } from 'react-native';
 
 import api from '~/services/api';
-import * as navigation from '~/services/navigation';
+// import NavigationService from '~/services/navigation';
 
 import { signInSuccess, signUpSuccess, signFailure } from './actions';
 
@@ -18,8 +18,6 @@ export function* signIn({ payload }) {
     const { token, user } = response.data;
 
     yield put(signInSuccess(token, user));
-
-    // history.push('/dashboard');
   } catch (err) {
     Alert.alert('Error', 'Fail to authenticate. Verify your data.');
     yield put(signFailure());
@@ -52,9 +50,10 @@ export function* signUp({ payload }) {
       password,
     });
 
+    // NavigationService.navigate('Sign');
     Alert.alert('Success!', 'Log in');
+
     yield put(signUpSuccess());
-    navigation.navigate('SignIn');
   } catch (err) {
     Alert.alert(
       'Error!',

@@ -8,7 +8,7 @@ import App from './App';
 
 import { store, persistor } from '~/store';
 
-export default function mobile() {
+export default function Root() {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
