@@ -25,11 +25,11 @@ export const SubmitButton = styled(Button)`
   margin-bottom: 5px;
 `;
 
-export const SignIn = styled.TouchableOpacity`
+export const SignUpButton = styled.TouchableOpacity`
   margin-top: 30px;
 `;
 
-export const SignInText = styled.Text`
+export const SignUpText = styled.Text`
   color: #fff;
   font-size: 16px;
 `;

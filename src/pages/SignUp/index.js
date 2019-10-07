@@ -14,8 +14,8 @@ import {
   Form,
   FormInput,
   SubmitButton,
-  SignIn,
-  SignInText,
+  SignUpButton,
+  SignUpText,
 } from './styles';
 
 export default function SignUp({ navigation }) {
@@ -93,9 +93,9 @@ export default function SignUp({ navigation }) {
           </SubmitButton>
         </Form>
 
-        <SignIn onPress={() => navigation.navigate('SignIn')}>
-          <SignInText>Already have an account? Sign in</SignInText>
-        </SignIn>
+        <SignUpButton onPress={() => navigation.navigate('SignIn')}>
+          <SignUpText>Already have an account? Sign in</SignUpText>
+        </SignUpButton>
       </Container>
     </Background>
   );
