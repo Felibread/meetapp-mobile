@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { parseISO, formatRelative, format, subDays, addDays } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { withNavigationFocus } from 'react-navigation';
 
@@ -37,20 +36,15 @@ function Dashboard() {
 
   useEffect(() => {
     async function loadMeetups() {
-      setLoading(true);
-
       try {
+        setLoading(true);
+        setMeetups([]);
+
         const response = await api.get('schedules', {
           params: { date },
         });
 
-        // console.tron.log('hey');
-        // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        // console.tron.log(timezone);
-
         const formattedMeetups = response.data.map(meetup => {
-          // const meetupZonedDate = utcToZonedTime(meetup.date, timezone);
-          // const compareDate = utcToZonedTime(date, timezone);
           const formattedDate = formatRelative(parseISO(meetup.date), date);
 
           return { ...meetup, formattedDate };
@@ -59,7 +53,7 @@ function Dashboard() {
         setMeetups(formattedMeetups);
         setLoading(false);
       } catch (err) {
-        console.tron.warn('ERRO');
+        console.tron.warn(err);
         setLoading(false);
       }
     }
