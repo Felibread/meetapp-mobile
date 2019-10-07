@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { parseISO, formatRelative } from 'date-fns';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import React, { useState, useEffect, useMemo } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { parseISO, formatRelative, format, subDays, addDays } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { withNavigationFocus } from 'react-navigation';
 
 import api from '~/services/api';
@@ -23,64 +25,111 @@ import {
   Location,
   Organizer,
   SubscriptionButton,
+  NoMeetups,
+  NoMeetupsText,
+  LoadingContainer,
 } from './styles';
 
 function Dashboard() {
   const [date, setDate] = useState(new Date());
   const [meetups, setMeetups] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadMeetups() {
-      const response = await api.get('schedules?date=2019-10-10');
+      setLoading(true);
 
-      const formattedMeetups = response.data.map(meetup => {
-        const formattedDate = formatRelative(parseISO(meetup.date), date);
+      try {
+        const response = await api.get('schedules', {
+          params: { date },
+        });
 
-        return { ...meetup, formattedDate };
-      });
+        // console.tron.log('hey');
+        // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        // console.tron.log(timezone);
 
-      setMeetups(formattedMeetups);
+        const formattedMeetups = response.data.map(meetup => {
+          // const meetupZonedDate = utcToZonedTime(meetup.date, timezone);
+          // const compareDate = utcToZonedTime(date, timezone);
+          const formattedDate = formatRelative(parseISO(meetup.date), date);
+
+          return { ...meetup, formattedDate };
+        });
+
+        setMeetups(formattedMeetups);
+        setLoading(false);
+      } catch (err) {
+        console.tron.warn('ERRO');
+        setLoading(false);
+      }
     }
 
     loadMeetups();
   }, [date]);
 
+  const dateFormatted = useMemo(() => format(date, 'MMMM d'), [date]);
+
+  function handlePrevDay() {
+    setDate(subDays(date, 1));
+  }
+
+  function handleNextDay() {
+    setDate(addDays(date, 1));
+  }
+
   return (
     <Background>
       <Container>
-        <Header>
-          <BackDate>
-            <Icon name="chevron-left" size={64} color="#fff" />
-          </BackDate>
-          <TextDate>10 de outubro</TextDate>
-          <NextDate>
-            <Icon name="chevron-right" size={64} color="#fff" />
-          </NextDate>
-        </Header>
-        <MeetupsList
-          data={meetups}
-          keyExtractor={meetup => String(meetup.id)}
-          renderItem={({ item: meetup }) => (
-            <Meetup>
-              <Banner
-                source={{
-                  uri: meetup.banner
-                    ? meetup.banner.url
-                    : 'https://api.adorable.io/avatars/59/abott@adorable.png',
-                }}
+        {loading ? (
+          <LoadingContainer>
+            <ActivityIndicator size="large" color="#fff" />
+          </LoadingContainer>
+        ) : (
+          <>
+            <Header>
+              <BackDate onPress={() => handlePrevDay()}>
+                <Icon name="chevron-left" size={64} color="#fff" />
+              </BackDate>
+              <TextDate>{dateFormatted}</TextDate>
+              <NextDate onPress={() => handleNextDay()}>
+                <Icon name="chevron-right" size={64} color="#fff" />
+              </NextDate>
+            </Header>
+            {meetups.length > 0 ? (
+              <MeetupsList
+                data={meetups}
+                keyExtractor={meetup => String(meetup.id)}
+                renderItem={({ item: meetup }) => (
+                  <Meetup>
+                    <Banner
+                      source={{
+                        uri: meetup.banner
+                          ? meetup.banner.url
+                          : 'https://api.adorable.io/avatars/59/abott@adorable.png',
+                      }}
+                    />
+                    <MeetupText>
+                      <Title>{meetup.name}</Title>
+                      <Info>
+                        <MeetupDate>{meetup.formattedDate}</MeetupDate>
+                        <Location>{meetup.location}</Location>
+                        <Organizer>
+                          Organizer: {meetup.organizer.name}
+                        </Organizer>
+                      </Info>
+                    </MeetupText>
+                    <SubscriptionButton>Subscribe</SubscriptionButton>
+                  </Meetup>
+                )}
               />
-              <MeetupText>
-                <Title>{meetup.name}</Title>
-                <Info>
-                  <MeetupDate>{meetup.formattedDate}</MeetupDate>
-                  <Location>{meetup.location}</Location>
-                  <Organizer>Organizer: {meetup.organizer.name}</Organizer>
-                </Info>
-              </MeetupText>
-              <SubscriptionButton>Subscribe</SubscriptionButton>
-            </Meetup>
-          )}
-        />
+            ) : (
+              <NoMeetups>
+                <Icon name="emoticon-sad-outline" size={64} color="#fff" />
+                <NoMeetupsText>No meetups for today</NoMeetupsText>
+              </NoMeetups>
+            )}
+          </>
+        )}
       </Container>
     </Background>
   );
@@ -89,7 +138,7 @@ function Dashboard() {
 Dashboard.navigationOptions = {
   tabBarLabel: 'Meetups',
   tabBarIcon: ({ tintColor }) => (
-    <Icon name="dashboard" size={20} color={tintColor} />
+    <Icon name="view-dashboard" size={20} color={tintColor} />
   ),
 };
 

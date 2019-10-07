@@ -31,7 +31,7 @@ export const MeetupsList = styled.FlatList.attrs({
 
 export const Meetup = styled.View`
   background: #fff;
-  border-radius: 4px;
+  border-radius: 6px;
   flex: 1;
 
   margin: 10px 0;
@@ -73,4 +73,21 @@ export const Organizer = styled.Text`
 
 export const SubscriptionButton = styled(Button)`
   margin: 15px;
+`;
+
+export const NoMeetups = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const NoMeetupsText = styled.Text`
+  color: #fff;
+  font-size: 20px;
+`;
+
+export const LoadingContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
 `;
