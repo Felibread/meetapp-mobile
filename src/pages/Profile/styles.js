@@ -28,7 +28,7 @@ export const FormInput = styled(Input)`
 
 export const SubmitButton = styled(Button)`
   align-self: stretch;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 `;
 
 export const Divider = styled.View`
@@ -36,4 +36,9 @@ export const Divider = styled.View`
   height: 1px;
   background: rgba(255, 255, 255, 0.2);
   margin: 20px 0 30px;
+`;
+
+export const Logout = styled(Button)`
+  align-self: stretch;
+  background: #d44059;
 `;

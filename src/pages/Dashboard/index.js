@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ActivityIndicator } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { parseISO, formatRelative, format, subDays, addDays } from 'date-fns';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { withNavigationFocus } from 'react-navigation';
 
 import api from '~/services/api';
+
+import { subscribeMeetupRequest } from '~/store/modules/subscription/actions';
 
 import Background from '~/components/Background';
 
@@ -30,6 +33,10 @@ import {
 } from './styles';
 
 function Dashboard() {
+  const dispatch = useDispatch();
+
+  const subscriptionLoading = useSelector(state => state.subscription.loading);
+
   const [date, setDate] = useState(new Date());
   const [meetups, setMeetups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +60,6 @@ function Dashboard() {
         setMeetups(formattedMeetups);
         setLoading(false);
       } catch (err) {
-        console.tron.warn(err);
         setLoading(false);
       }
     }
@@ -69,6 +75,10 @@ function Dashboard() {
 
   function handleNextDay() {
     setDate(addDays(date, 1));
+  }
+
+  function handleSubscription(id) {
+    dispatch(subscribeMeetupRequest(id));
   }
 
   return (
@@ -99,7 +109,7 @@ function Dashboard() {
                       source={{
                         uri: meetup.banner
                           ? meetup.banner.url
-                          : 'https://api.adorable.io/avatars/59/abott@adorable.png',
+                          : 'https://rocketseat.com.br/static/og.png',
                       }}
                     />
                     <MeetupText>
@@ -112,7 +122,14 @@ function Dashboard() {
                         </Organizer>
                       </Info>
                     </MeetupText>
-                    <SubscriptionButton>Subscribe</SubscriptionButton>
+                    {!meetup.past && (
+                      <SubscriptionButton
+                        loading={subscriptionLoading}
+                        onPress={() => handleSubscription(meetup.id)}
+                      >
+                        Subscribe
+                      </SubscriptionButton>
+                    )}
                   </Meetup>
                 )}
               />

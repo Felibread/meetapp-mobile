@@ -3,18 +3,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { updateProfileRequest } from '~/store/modules/user/actions';
-
-import logo from '~/assets/logo.png';
+import { signOut } from '~/store/modules/auth/actions';
 
 import Background from '~/components/Background';
 
 import {
   Container,
-  Avatar,
+  // Avatar,
   Form,
   FormInput,
   SubmitButton,
   Divider,
+  Logout,
 } from './styles';
 
 export default function Profile() {
@@ -25,30 +25,32 @@ export default function Profile() {
   const newPasswordRef = useRef();
   const confirmNewPasswordRef = useRef();
 
-  const loading = useSelector(state => state.auth.loading);
+  const loading = useSelector(state => state.user.loading);
+  const username = useSelector(state => state.user.profile.name);
+  const useremail = useSelector(state => state.user.profile.email);
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState(username);
+  const [email, setEmail] = useState(useremail);
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   function handleSubmit() {
     dispatch(
-      updateProfileRequest(
+      updateProfileRequest({
         name,
         email,
         password,
         newPassword,
         confirmNewPassword,
-      ),
+      }),
     );
   }
 
   return (
     <Background>
       <Container>
-        <Avatar source={logo} />
+        {/* <Avatar source={logo} /> */}
 
         <Form>
           <FormInput
@@ -96,6 +98,7 @@ export default function Profile() {
             returnKeyType="next"
             onSubmitEditing={() => confirmNewPasswordRef.current.focus()}
             value={newPassword}
+            email
             onChangeText={setNewPassword}
           />
 
@@ -113,6 +116,7 @@ export default function Profile() {
           <SubmitButton loading={loading} onPress={() => handleSubmit()}>
             Update profile
           </SubmitButton>
+          <Logout onPress={() => dispatch(signOut())}>Log out</Logout>
         </Form>
       </Container>
     </Background>

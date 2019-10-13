@@ -1,7 +1,7 @@
 import produce from 'immer';
 
 const INITIAL_STATE = {
-  loading: false
+  loading: false,
 };
 
 export default function meetup(state = INITIAL_STATE, action) {

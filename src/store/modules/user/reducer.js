@@ -2,7 +2,7 @@ import produce from 'immer';
 
 const INITIAL_STATE = {
   profile: null,
-  loading: false
+  loading: false,
 };
 
 export default function user(state = INITIAL_STATE, action) {
