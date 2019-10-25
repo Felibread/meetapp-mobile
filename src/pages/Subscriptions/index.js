@@ -13,6 +13,8 @@ import { unsubscribeMeetupRequest } from '~/store/modules/subscription/actions';
 import Background from '~/components/Background';
 import {
   Container,
+  Header,
+  ScreenTitle,
   MeetupsList,
   Meetup,
   Banner,
@@ -66,13 +68,39 @@ export default function Subscriptions({ navigation }) {
     loadSubscriptions();
   }, [date]);
 
+  async function refreshSubscriptions() {
+    try {
+      setLoading(true);
+      setSubscriptions([]);
+      const response = await api.get('subscriptions');
+
+      const formattedMeetups = response.data.map(subscription => {
+        const formattedDate = formatRelative(
+          parseISO(subscription.meetup.date),
+          date,
+        );
+
+        return { ...subscription.meetup, formattedDate };
+      });
+
+      setSubscriptions(formattedMeetups);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+    }
+  }
+
   function handleUnsubscription(id) {
     dispatch(unsubscribeMeetupRequest(id));
+    refreshSubscriptions();
   }
 
   return (
     <Background>
       <Container>
+        <Header>
+          <ScreenTitle>You are going to</ScreenTitle>
+        </Header>
         {loading ? (
           <LoadingContainer>
             <ActivityIndicator size="large" color="#fff" />
@@ -83,6 +111,8 @@ export default function Subscriptions({ navigation }) {
               <MeetupsList
                 data={subscriptions}
                 keyExtractor={meetup => String(meetup.id)}
+                onRefresh={refreshSubscriptions}
+                refreshing={loading}
                 renderItem={({ item: meetup }) => (
                   <Meetup>
                     <Banner

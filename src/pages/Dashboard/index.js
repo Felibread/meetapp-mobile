@@ -67,6 +67,28 @@ function Dashboard() {
     loadMeetups();
   }, [date]);
 
+  async function refreshData() {
+    try {
+      setLoading(true);
+      setMeetups([]);
+
+      const response = await api.get('schedules', {
+        params: { date },
+      });
+
+      const formattedMeetups = response.data.map(meetup => {
+        const formattedDate = formatRelative(parseISO(meetup.date), date);
+
+        return { ...meetup, formattedDate };
+      });
+
+      setMeetups(formattedMeetups);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+    }
+  }
+
   const dateFormatted = useMemo(() => format(date, 'MMMM d'), [date]);
 
   function handlePrevDay() {
@@ -103,6 +125,8 @@ function Dashboard() {
               <MeetupsList
                 data={meetups}
                 keyExtractor={meetup => String(meetup.id)}
+                onRefresh={refreshData}
+                refreshing={loading}
                 renderItem={({ item: meetup }) => (
                   <Meetup>
                     <Banner

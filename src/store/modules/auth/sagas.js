@@ -2,7 +2,7 @@ import { takeLatest, call, put, all } from 'redux-saga/effects';
 import { Alert } from 'react-native';
 
 import api from '~/services/api';
-// import NavigationService from '~/services/navigation';
+import NavigationService from '~/services/navigation';
 
 import { signInSuccess, signUpSuccess, signFailure } from './actions';
 
@@ -50,7 +50,7 @@ export function* signUp({ payload }) {
       password,
     });
 
-    // NavigationService.navigate('Sign');
+    NavigationService.navigate('SignIn');
     Alert.alert('Success!', 'Log in');
 
     yield put(signUpSuccess());

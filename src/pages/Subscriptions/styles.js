@@ -13,11 +13,10 @@ export const Header = styled.View`
   justify-content: center;
 `;
 
-export const BackDate = styled.TouchableOpacity``;
-
-export const TextDate = styled.Text`
+export const ScreenTitle = styled.Text`
   color: #fff;
   font-size: 20px;
+  font-weight: bold;
 `;
 
 export const NextDate = styled.TouchableOpacity``;

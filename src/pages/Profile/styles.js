@@ -11,9 +11,10 @@ export const Container = styled.SafeAreaView`
 `;
 
 export const Avatar = styled.Image`
-  width: 100px;
-  height: 100px;
-  border-radius: 50px;
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  background: #999;
 `;
 
 export const Form = styled.View`
