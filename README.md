@@ -14,10 +14,8 @@ Bootcamp GoStack Meetapp
 **<a href="https://github.com/Felibread/meetapp-backend">Backend</a>***
 
 ---
-<div align="center">
 **:warning:WARNING:warning:**<br>
 ***Unfortunately it was not tested in ios**, please consider running it using android.*
-</div>
 
 ---
 
