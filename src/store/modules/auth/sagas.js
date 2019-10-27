@@ -50,7 +50,7 @@ export function* signUp({ payload }) {
       password,
     });
 
-    NavigationService.navigate('SignIn');
+    // NavigationService.navigate('SignIn');
     Alert.alert('Success!', 'Log in');
 
     yield put(signUpSuccess());

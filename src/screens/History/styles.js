@@ -13,11 +13,10 @@ export const Header = styled.View`
   justify-content: center;
 `;
 
-export const BackDate = styled.TouchableOpacity``;
-
-export const TextDate = styled.Text`
+export const ScreenTitle = styled.Text`
   color: #fff;
   font-size: 20px;
+  font-weight: bold;
 `;
 
 export const NextDate = styled.TouchableOpacity``;
@@ -71,10 +70,6 @@ export const Organizer = styled.Text`
   margin-bottom: 5px;
 `;
 
-export const SubscriptionButton = styled(Button)`
-  margin: 15px;
-`;
-
 export const NoMeetups = styled.View`
   flex: 1;
   align-items: center;
@@ -90,4 +85,15 @@ export const LoadingContainer = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
+`;
+
+export const MeetupsLink = styled.TouchableOpacity`
+  color: #fff;
+  font-size: 16px;
+`;
+
+export const MeetupsLinkText = styled.Text`
+  margin-top: 5px;
+  color: #d44059;
+  font-size: 16px;
 `;

@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ActivityIndicator } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { ActivityIndicator, Alert } from 'react-native';
 import { parseISO, formatRelative, format, subDays, addDays } from 'date-fns';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { withNavigationFocus } from 'react-navigation';
 
 import api from '~/services/api';
-
-import { subscribeMeetupRequest } from '~/store/modules/subscription/actions';
 
 import Background from '~/components/Background';
 
@@ -33,13 +30,11 @@ import {
 } from './styles';
 
 function Dashboard() {
-  const dispatch = useDispatch();
-
-  const subscriptionLoading = useSelector(state => state.subscription.loading);
-
   const [date, setDate] = useState(new Date());
   const [meetups, setMeetups] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
 
   useEffect(() => {
     async function loadMeetups() {
@@ -67,7 +62,7 @@ function Dashboard() {
     loadMeetups();
   }, [date]);
 
-  async function refreshData() {
+  async function refreshMeetups() {
     try {
       setLoading(true);
       setMeetups([]);
@@ -99,8 +94,17 @@ function Dashboard() {
     setDate(addDays(date, 1));
   }
 
-  function handleSubscription(id) {
-    dispatch(subscribeMeetupRequest(id));
+  async function handleSubscribe(id) {
+    try {
+      setSubscriptionLoading(true);
+      await api.post(`subscriptions/${id}`);
+      Alert.alert('Success', 'Subscribed successfully!');
+      setSubscriptionLoading(false);
+    } catch (error) {
+      setSubscriptionLoading(false);
+      const message = error.response.data.error;
+      Alert.alert('Error', message);
+    }
   }
 
   return (
@@ -124,8 +128,8 @@ function Dashboard() {
             {meetups.length > 0 ? (
               <MeetupsList
                 data={meetups}
-                keyExtractor={meetup => String(meetup.id)}
-                onRefresh={refreshData}
+                onEndReachedThreshold={0.2}
+                onRefresh={refreshMeetups}
                 refreshing={loading}
                 renderItem={({ item: meetup }) => (
                   <Meetup>
@@ -149,7 +153,7 @@ function Dashboard() {
                     {!meetup.past && (
                       <SubscriptionButton
                         loading={subscriptionLoading}
-                        onPress={() => handleSubscription(meetup.id)}
+                        onPress={() => handleSubscribe(meetup.id)}
                       >
                         Subscribe
                       </SubscriptionButton>

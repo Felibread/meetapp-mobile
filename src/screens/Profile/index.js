@@ -33,7 +33,7 @@ export default function Profile() {
   const loading = useSelector(state => state.user.loading);
   const username = useSelector(state => state.user.profile.name);
   const useremail = useSelector(state => state.user.profile.email);
-  const user_avatar = useSelector(state => state.user.profile.avatar.url);
+  const user_avatar = useSelector(state => state.user.profile.avatar);
 
   const [name, setName] = useState(username);
   const [email, setEmail] = useState(useremail);
@@ -114,7 +114,15 @@ export default function Profile() {
     <Background>
       <Container>
         <TouchableOpacity onPress={handleSelectImage}>
-          <Avatar source={preview || { uri: user_avatar }} />
+          <Avatar
+            source={
+              preview || {
+                uri: user_avatar
+                  ? user_avatar.url
+                  : 'https://api.adorable.io/avatars/60/abott@adorable.png',
+              }
+            }
+          />
         </TouchableOpacity>
 
         <Form>

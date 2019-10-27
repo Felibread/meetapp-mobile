@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { ActivityIndicator } from 'react-native';
 import { parseISO, formatRelative } from 'date-fns';
 import MaterialComunnityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import api from '~/services/api';
-
-import { unsubscribeMeetupRequest } from '~/store/modules/subscription/actions';
 
 import Background from '~/components/Background';
 import {
@@ -24,7 +22,6 @@ import {
   MeetupDate,
   Location,
   Organizer,
-  SubscriptionButton,
   NoMeetups,
   NoMeetupsText,
   LoadingContainer,
@@ -32,16 +29,9 @@ import {
   MeetupsLinkText,
 } from './styles';
 
-export default function Subscriptions({ navigation }) {
-  const dispatch = useDispatch();
-
-  const [date, setDate] = useState(new Date());
+export default function History({ navigation }) {
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const unsubscriptionLoading = useSelector(
-    state => state.subscription.loading,
-  );
 
   useEffect(() => {
     async function loadSubscriptions() {
@@ -49,10 +39,14 @@ export default function Subscriptions({ navigation }) {
         setLoading(true);
         const response = await api.get('subscriptions');
 
-        const formattedMeetups = response.data.map(subscription => {
+        const onlyFutureMeetups = response.data.filter(subscription => {
+          return subscription.meetup.past === true;
+        });
+
+        const formattedMeetups = onlyFutureMeetups.map(subscription => {
           const formattedDate = formatRelative(
             parseISO(subscription.meetup.date),
-            date,
+            new Date(),
           );
 
           return { ...subscription.meetup, formattedDate };
@@ -66,7 +60,7 @@ export default function Subscriptions({ navigation }) {
     }
 
     loadSubscriptions();
-  }, [date]);
+  }, []);
 
   async function refreshSubscriptions() {
     try {
@@ -77,7 +71,7 @@ export default function Subscriptions({ navigation }) {
       const formattedMeetups = response.data.map(subscription => {
         const formattedDate = formatRelative(
           parseISO(subscription.meetup.date),
-          date,
+          new Date(),
         );
 
         return { ...subscription.meetup, formattedDate };
@@ -90,16 +84,11 @@ export default function Subscriptions({ navigation }) {
     }
   }
 
-  function handleUnsubscription(id) {
-    dispatch(unsubscribeMeetupRequest(id));
-    refreshSubscriptions();
-  }
-
   return (
     <Background>
       <Container>
         <Header>
-          <ScreenTitle>You are going to</ScreenTitle>
+          <ScreenTitle>You went to</ScreenTitle>
         </Header>
         {loading ? (
           <LoadingContainer>
@@ -132,14 +121,6 @@ export default function Subscriptions({ navigation }) {
                         </Organizer>
                       </Info>
                     </MeetupText>
-                    {!meetup.past && (
-                      <SubscriptionButton
-                        loading={unsubscriptionLoading}
-                        onPress={() => handleUnsubscription(meetup.id)}
-                      >
-                        Unsubscribe
-                      </SubscriptionButton>
-                    )}
                   </Meetup>
                 )}
               />
@@ -150,10 +131,17 @@ export default function Subscriptions({ navigation }) {
                   size={64}
                   color="#fff"
                 />
-                <NoMeetupsText>No subscriptions</NoMeetupsText>
+                <NoMeetupsText>No meetups here yet</NoMeetupsText>
                 <MeetupsLink onPress={() => navigation.navigate('Dashboard')}>
                   <MeetupsLinkText>Check meetups</MeetupsLinkText>
                 </MeetupsLink>
+                <TouchableOpacity onPress={() => refreshSubscriptions()}>
+                  <MaterialComunnityIcon
+                    name="refresh"
+                    size={32}
+                    color="#fff"
+                  />
+                </TouchableOpacity>
               </NoMeetups>
             )}
           </>
@@ -163,14 +151,14 @@ export default function Subscriptions({ navigation }) {
   );
 }
 
-Subscriptions.navigationOptions = {
-  tabBarLabel: 'Subscriptions',
+History.navigationOptions = {
+  tabBarLabel: 'History',
   tabBarIcon: ({ tintColor }) => (
-    <MaterialIcon name="event" size={20} color={tintColor} />
+    <MaterialIcon name="history" size={20} color={tintColor} />
   ),
 };
 
-Subscriptions.propTypes = {
+History.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
