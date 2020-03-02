@@ -11,7 +11,7 @@ Bootcamp GoStack Meetapp
 # Mobile
 
 *First get the server up and running by following theses steps :point_right:
-**<a href="https://github.com/Felibread/meetapp-backend">Backend</a>***
+**<a href="https://github.com/felipe-jm/meetapp-backend">Backend</a>***
 
 ---
 **:warning:WARNING:warning:**<br>
@@ -36,7 +36,7 @@ react-native run-android
 
 ## Check out the frontend version! :pray:
 
-### <a href="https://github.com/Felibread/meetapp-frontend">Frontend</a>
+### <a href="https://github.com/felipe-jm/meetapp-frontend">Frontend</a>
 
 ---
 
